@@ -123,7 +123,34 @@ def coding_formula(formula, x):
 
 def useEquation(x, equation):
     return coding_formula(equation, x)
-    
+
+def morsecode(message, mode):
+    MORSE_CODE_DICT = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 
+    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 
+    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 
+    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 
+    'Y': '-.--', 'Z': '--..'
+}
+    result = ""
+    if(mode == "encrypt"):
+        result = ""
+        for letter in message:
+            if letter != " ":
+                result += MORSE_CODE_DICT[letter] + " "
+            else:
+                result += " "
+    if(mode == "decrypt"):
+        result = ""
+        # do the reverse
+        MORSE_CODE_DICT = {v: k for k, v in MORSE_CODE_DICT.items()}
+        message = message.split(" ")
+        for letter in message:
+            if letter in MORSE_CODE_DICT:
+                result += MORSE_CODE_DICT[letter]
+            else:
+                result += letter
+    return result
 def rail(message, rails, mode):
     if(mode == "encrypt"):
         # Initialize rail matrix
@@ -200,6 +227,8 @@ def encrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return affine(message, "encrypt", formula)
     elif cipher == "f":
         return customFormula(message, formula)
+    elif cipher == "m":
+        return morsecode(message, "encrypt")
 
 def decrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
     if cipher == "c":
@@ -212,6 +241,10 @@ def decrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return vigenere(message, key, "decrypt", alphabet)
     elif cipher == "a":
         return affine(message, "decrypt", formula)
+    elif cipher == "f":
+        return customFormula(message, formula)
+    elif cipher == "m":
+        return morsecode(message, "decrypt")
 
 def main():
     print("Welcome to the Cipher program!")
@@ -225,6 +258,8 @@ def main():
         print("Rail (r)")
         print("Vigenere (v)")
         print("Affine (a)")
+        print("Morse (m)")
+        print("Custom Formula (f)")
         cipher = input("> ")
         encrypted = ""
         dKey = -1
@@ -235,7 +270,7 @@ def main():
             key = input("> ")
             if(key != ""):
                 dKey = key
-        if(cipher == "a" or cipher == "c"):
+        if(cipher == "a" or cipher == "c" or cipher == "m"):
             print("Enter the alphabet to use: (leave blank for default)")
             alphabet = input("> ")
             if(alphabet != ""):
@@ -256,6 +291,8 @@ def main():
         print("Rail (r)")
         print("Vigenere (v)")
         print("Affine (a)")
+        print("Morse (m)")
+        print("Custom Formula (f)")
         cipher = input("> ")
         decrypted = ""
         dKey = -1
@@ -266,7 +303,7 @@ def main():
             key = input("> ")
             if(key != ""):
                 dKey = key
-        if(cipher == "a" or cipher == "c"):
+        if(cipher == "a" or cipher == "c" or cipher == "m"):
             print("Enter the alphabet to use: (leave blank for default)")
             alphabet = input("> ")
             if(alphabet != ""):
