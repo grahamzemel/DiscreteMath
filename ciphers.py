@@ -134,14 +134,12 @@ def morsecode(message, mode):
 }
     result = ""
     if(mode == "encrypt"):
-        result = ""
         for letter in message:
             if letter != " ":
                 result += MORSE_CODE_DICT[letter] + " "
             else:
                 result += " "
     if(mode == "decrypt"):
-        result = ""
         # do the reverse
         MORSE_CODE_DICT = {v: k for k, v in MORSE_CODE_DICT.items()}
         message = message.split(" ")
