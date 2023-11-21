@@ -223,8 +223,6 @@ def encrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return vigenere(message, key, "encrypt", alphabet)
     elif cipher == "a":
         return affine(message, "encrypt", formula)
-    elif cipher == "f":
-        return customFormula(message, formula)
     elif cipher == "m":
         return morsecode(message, "encrypt")
 
@@ -239,8 +237,6 @@ def decrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return vigenere(message, key, "decrypt", alphabet)
     elif cipher == "a":
         return affine(message, "decrypt", formula)
-    elif cipher == "f":
-        return customFormula(message, formula)
     elif cipher == "m":
         return morsecode(message, "decrypt")
 
@@ -257,7 +253,6 @@ def main():
         print("Vigenere (v)")
         print("Affine (a)")
         print("Morse (m)")
-        print("Custom Formula (f)")
         cipher = input("> ")
         encrypted = ""
         dKey = -1
@@ -290,7 +285,6 @@ def main():
         print("Vigenere (v)")
         print("Affine (a)")
         print("Morse (m)")
-        print("Custom Formula (f)")
         cipher = input("> ")
         decrypted = ""
         dKey = -1
