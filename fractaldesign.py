@@ -118,6 +118,7 @@ def plot_graph(iterator_class, iterations):
     ax.clear()
     ax.plot(points[:, 0], points[:, 1])
     ax.text(0.05, 0.9, f'Iterations: {iterations}', transform=ax.transAxes)
+    ax.text(0.05, 1.1, f'Press < to show the previous iteration, or > to show the next.', transform=ax.transAxes)
     ax.set_xlim([-0.6, 0.6])
     ax.set_ylim([-0.3, 0.3])
     ax.set_aspect('equal', adjustable='box')
@@ -132,7 +133,7 @@ def on_key(event):
         iterations = min(10, iterations + 1)  # Clamp to a sensible limit
         plot_graph(current_iterator, iterations)
     elif event.key == '<':
-        iterations = max(1, iterations - 1)
+        iterations = max(0, iterations - 1)
         plot_graph(current_iterator, iterations)
 
 # Create a single figure instance
