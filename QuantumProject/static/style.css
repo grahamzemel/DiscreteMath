@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#main {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+.chat-message {
+    background-color: #f1f1f1;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.destroy {
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.destroySubtext {
+    font-size: 10px;
+    padding-left: 10px;
+}
+
+.destroyDiv{
+    display: flexbox;
+    text-align: center;
+    justify-content: center;
+    max-width: 20%;
+    float: right;
+}
+
+#key{
+    font-family: monospace;
+    padding: 10px;
+}

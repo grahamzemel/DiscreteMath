@@ -1,36 +1,75 @@
-Quantum Security Chatroom
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Quantum Security Chatroom</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        // cachedText = "";
-        // function check() {
-        //     $.post('/check', function(data) {
-        //         if (data != cachedText) {
-        //             $('#response').html(data);
-        //             cachedText = data;
-        //         }
-        //     });
-        // }
+        // JavaScript function to check for new messages
+        cachedText = "";
+        function check() {
+            $.post('/check', function(data) {
+                if (JSON.stringify(data) != JSON.stringify(cachedText)) {
+                    var html = '';
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            html += '<p class="chat-message">' + data[i] + '</p>';
+                        }
+                    } else {
+                        html = '<p class="chat-message">No messages yet.</p>';
+                    }
+                    $('#response').html(html);
+                    cachedText = data;
+                }
+            });
+        }
+        setInterval(check, 5000);
+        check();
 
-        // setInterval(check, 5000);
+        // when the key is sent to this page via the attribute in quantumSecurity.py, censor all but the first 6 characters using *'s. Create a button to reveal the key.
+        onload = function() {
+            var key = "{{ key }}";
+            var censoredKey = key.replace(/.(?=.{6})/g, '*');
+            document.getElementById("key").innerHTML = censoredKey;
+        }
+       function toggleKey() {
+            var key = "{{ key }}";
+            var censoredKey = key.replace(/.(?=.{6})/g, '*');
+            var fullKey = document.getElementById("key").innerHTML;
+            if (fullKey == censoredKey) {
+                document.getElementById("key").innerHTML = key;
+            } else {
+                document.getElementById("key").innerHTML = censoredKey;
+            }
+        }
     </script>
 </head>
+
 <body>
     <div id="main">
-       Chat form and Response box
-         <form action="/chat" onsubmit="return send(event)" method="post">
-                  <input type="text" name="message" id="message" autocomplete="off" placeholder="Type message here...">
-                  <input type="submit" value="Send">
-            </form>
+        <h2>Quantum Security Chat Room</h2>
         <div>
-            <div id="response">
-                {% for message in chatHistory %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
+            <div id="key"></div>
+            <button type="button" onclick="toggleKey()">Toggle Key</button>
+            <form action="/destroy" method="post">
+                <div class="destroyDiv">
+                <input type="submit" class="destroy" value="Destroy Key and Chat Room">
+                <p class="destroySubtext">WARNING: This action is irreversible, you will PERMANENTLY delete all encrypted records and messages associated with this key.</p>
+                </div>
+            </form>
+        </div>
+        <br>
+        <h3>Chat History</h3>
+        <form action="/chat" method="post">
+            <input type="text" name="message" id="message" autocomplete="off" placeholder="Type message here...">
+            <input type="submit" value="Send">
+        </form>
+        <div id="response">
+            {% for message in chatHistory %}
+                <p class="chat-message">{{ message }}</p>
+            {% endfor %}
         </div>
     </div>
+
 </html>

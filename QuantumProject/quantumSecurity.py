@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
 import hashlib
 import os
+
+from graphviz import render
 from quantum import qkd, encrypt_message, decrypt_message
 
 newSite = Flask(__name__)
@@ -16,19 +18,40 @@ def generate_new_key():
 def index():
     return render_template("login.html")
 
-# @newSite.route('/check', methods=['POST'])
-# def check():
-#     # check if current messages are up to date
-#     # if not, update them
-#     with open(str(session['key_hex']) + '.txt', 'a'):
-#         lines = [line.rstrip('\n') for line in open(str(session['key_hex']) + '.txt')]
-#         if len(lines) > 0:
-#             last_line = lines[-1]
-#             timestamp, timestamp2, user, nonce_hex, ciphertext_hex, tag_hex = last_line.split(" ")
-#             nonce = bytes.fromhex(nonce_hex)
-#             ciphertext = bytes.fromhex(ciphertext_hex)
-#             tag = bytes.fromhex(tag_hex)
-#             decrypted_message = decrypt_message(session['generated_key_hex'], nonce, ciphertext, tag)
+@newSite.route('/check', methods=['POST'])
+def check():
+    chat = []
+    chat_file = session.get('key_hex', '') + '.txt'
+    try:
+        with open(chat_file, 'r') as chatFile:
+            for line in chatFile:
+                line = line.strip()
+                if line:
+                    timestamp, timestamp2, user, nonce_hex, ciphertext_hex, tag_hex = line.split(" ")
+                    nonce = bytes.fromhex(nonce_hex)
+                    ciphertext = bytes.fromhex(ciphertext_hex)
+                    tag = bytes.fromhex(tag_hex)
+                    decrypted_message = decrypt_message(hashlib.sha256(session['key_hex'].encode()).digest(), nonce, ciphertext, tag)
+                    chat.append(f"{timestamp} {timestamp2} | {user}: {decrypted_message}")
+        chat.reverse()
+    except FileNotFoundError:
+        pass
+    return chat
+
+@newSite.route('/destroy', methods=['POST'])
+def destroy():
+    # Delete the key from circulatingkeys.txt and delete the file with the name of the key, also sign out
+    if 'user' in session:
+        with open('circulatingkeys.txt', 'r') as keys_file:
+            lines = keys_file.readlines()
+        with open('circulatingkeys.txt', 'w') as keys_file:
+            for line in lines:
+                if line.strip() != session['key_hex']:
+                    keys_file.write(line)
+        os.remove(session['key_hex'] + '.txt')
+        session.pop('user', None)
+        session.pop('key_hex', None)
+    return redirect(url_for('login'))
 
 @newSite.route('/request', methods=['POST'])
 def request_key():
@@ -96,7 +119,7 @@ def chat():
                         decrypted_message = decrypt_message(shared_key, nonce, ciphertext, tag)
                         chatHistory.append(f"{timestamp} {timestamp2} | {user}: {decrypted_message}")
                 chatHistory.reverse()
-            return render_template('chat.html', chatHistory=chatHistory)
+            return render_template('chat.html', key=session['key_hex'], chatHistory=chatHistory)
 
     except Exception as e:
         print(f"Error: {e}")
