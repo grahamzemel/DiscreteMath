@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum Security Chatroom</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function generateKey() {
+            $.post('/request', function(data) {
+                $('#key').text(data);  // Display the generated key
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div id="info">
+            <h2>Login Here</h2>
+            <form action="/login" method="post">
+                <label><b>Username</b></label>
+                <input type="text" name="uname" placeholder="Username"><br><br>
+                <label><b>Password</b></label>
+                <input type="password" name="pass" placeholder="Password"><br><br>
+                <button style="background-color: #6495ed; color: white;" type="submit"><b>Login</b></button>
+            </form>
+            <button type="button" onclick="generateKey()">Generate Key</button>
+            <p id="key"></p>
+        </div>
+    </div>
+</html>

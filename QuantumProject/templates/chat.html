@@ -1,0 +1,36 @@
+Quantum Security Chatroom
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum Security Chatroom</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        // cachedText = "";
+        // function check() {
+        //     $.post('/check', function(data) {
+        //         if (data != cachedText) {
+        //             $('#response').html(data);
+        //             cachedText = data;
+        //         }
+        //     });
+        // }
+
+        // setInterval(check, 5000);
+    </script>
+</head>
+<body>
+    <div id="main">
+       Chat form and Response box
+         <form action="/chat" onsubmit="return send(event)" method="post">
+                  <input type="text" name="message" id="message" autocomplete="off" placeholder="Type message here...">
+                  <input type="submit" value="Send">
+            </form>
+        <div>
+            <div id="response">
+                {% for message in chatHistory %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</html>
