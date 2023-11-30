@@ -212,6 +212,15 @@ def vigenere(text, key, mode, alphabet = string.ascii_uppercase):
             result += chr((text_as_int[i] - key_as_int[i % key_length]) % 26 + 65)
     return result
 
+def transposition(message, rails, mode):
+    result = ""
+    if(mode == "encrypt"):
+        for key in range(1,int(rails)+1):
+            for i in range(0, key):
+                result += message[i::key]
+            result += "\n"
+    return result
+
 def encrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
     if cipher == "c":
         key = int(key)
@@ -225,7 +234,9 @@ def encrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return affine(message, "encrypt", formula)
     elif cipher == "m":
         return morsecode(message, "encrypt")
-
+    elif cipher == "t":
+        return transposition(message, key, "encrypt")
+    
 def decrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
     if cipher == "c":
         key = int(key)
@@ -239,6 +250,8 @@ def decrypt(message, cipher, key, formula, alphabet=string.ascii_uppercase):
         return affine(message, "decrypt", formula)
     elif cipher == "m":
         return morsecode(message, "decrypt")
+    elif cipher == "t":
+        return transposition(message, key, "decrypt")
 
 def main():
     print("Welcome to the Cipher program!")
@@ -253,12 +266,13 @@ def main():
         print("Vigenere (v)")
         print("Affine (a)")
         print("Morse (m)")
+        print("Transposition (t)")
         cipher = input("> ")
         encrypted = ""
         dKey = -1
         dAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         dFormula = "x"
-        if(cipher == "c" or cipher == "r" or cipher == "v"):
+        if(cipher == "c" or cipher == "r" or cipher == "v" or cipher == "t"):
             print("Enter the key: (leave blank for default)")
             key = input("> ")
             if(key != ""):
@@ -285,12 +299,13 @@ def main():
         print("Vigenere (v)")
         print("Affine (a)")
         print("Morse (m)")
+        print("Transposition (t)")
         cipher = input("> ")
         decrypted = ""
         dKey = -1
         dAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         dFormula = "x"
-        if(cipher == "c" or cipher == "r" or cipher == "v"):
+        if(cipher == "c" or cipher == "r" or cipher == "v" or cipher == "t"):
             print("Enter the key: (leave blank for bruteforce)")
             key = input("> ")
             if(key != ""):
